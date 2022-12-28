@@ -21,16 +21,16 @@ pub fn build_tilemap(
     for x in 0..map_size.x {
         for y in 0..map_size.y {
             let tile_texture_index = match (x, y) {
-                (8, 0) => TileTextureIndex(2),
-                (8, 10) => TileTextureIndex(2),
+                (8, 0) => TileTextureIndex(3),
+                (8, 10) => TileTextureIndex(3),
 
-                (3, 3) => TileTextureIndex(2),
-                (3, 5) => TileTextureIndex(2),
-                (3, 7) => TileTextureIndex(2),
+                (3, 3) => TileTextureIndex(4),
+                (3, 5) => TileTextureIndex(4),
+                (3, 7) => TileTextureIndex(4),
 
-                (13, 3) => TileTextureIndex(2),
-                (13, 5) => TileTextureIndex(2),
-                (13, 7) => TileTextureIndex(2),
+                (13, 3) => TileTextureIndex(4),
+                (13, 5) => TileTextureIndex(4),
+                (13, 7) => TileTextureIndex(4),
 
                 (8, _) => TileTextureIndex(2),
                 (_, 1) => TileTextureIndex(1),
@@ -46,11 +46,6 @@ pub fn build_tilemap(
                     position: tile_pos,
                     tilemap_id: TilemapId(tilemap_entity),
                     texture_index: tile_texture_index,
-                    flip: TileFlip {
-                        x: rng.bool(),
-                        y: rng.bool(),
-                        ..default()
-                    },
                     ..default()
                 })
                 .id();
