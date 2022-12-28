@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
 use bevy_turborand::prelude::*;
 
-pub const MAP_TILE_WIDTH: u32 = 16;
+pub const MAP_TILE_WIDTH: u32 = 17;
 pub const MAP_TILE_HEIGHT: u32 = 11;
 
 mod map_builder;

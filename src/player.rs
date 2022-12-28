@@ -28,18 +28,18 @@ pub fn move_(
     let mut player_transform = player_transform_query.single_mut();
 
     if keyboard_input.pressed(KeyCode::Up) || keyboard_input.pressed(KeyCode::W) {
-        player_transform.translation.y += 1.;
+        player_transform.translation.y += 2.;
     }
 
     if keyboard_input.pressed(KeyCode::Down) || keyboard_input.pressed(KeyCode::S) {
-        player_transform.translation.y -= 1.;
+        player_transform.translation.y -= 2.;
     }
 
     if keyboard_input.pressed(KeyCode::Left) || keyboard_input.pressed(KeyCode::A) {
-        player_transform.translation.x -= 1.;
+        player_transform.translation.x -= 2.;
     }
 
     if keyboard_input.pressed(KeyCode::Right) || keyboard_input.pressed(KeyCode::D) {
-        player_transform.translation.x += 1.;
+        player_transform.translation.x += 2.;
     }
 }

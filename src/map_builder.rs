@@ -7,7 +7,7 @@ pub fn build_tilemap(
     asset_server: Res<AssetServer>,
     mut global_rng: ResMut<GlobalRng>,
 ) {
-    let grass_tile_handle: Handle<Image> = asset_server.load("images/tile_grass.png");
+    let grass_tile_handle: Handle<Image> = asset_server.load("images/tiles.png");
 
     let map_size = TilemapSize {
         x: crate::MAP_TILE_WIDTH,
@@ -20,15 +20,36 @@ pub fn build_tilemap(
 
     for x in 0..map_size.x {
         for y in 0..map_size.y {
+            let tile_texture_index = match (x, y) {
+                (8, 0) => TileTextureIndex(2),
+                (8, 10) => TileTextureIndex(2),
+
+                (3, 3) => TileTextureIndex(2),
+                (3, 5) => TileTextureIndex(2),
+                (3, 7) => TileTextureIndex(2),
+
+                (13, 3) => TileTextureIndex(2),
+                (13, 5) => TileTextureIndex(2),
+                (13, 7) => TileTextureIndex(2),
+
+                (8, _) => TileTextureIndex(2),
+                (_, 1) => TileTextureIndex(1),
+                (_, 9) => TileTextureIndex(1),
+                (3, _) => TileTextureIndex(1),
+                (13, _) => TileTextureIndex(1),
+                _ => TileTextureIndex(0),
+            };
+
             let tile_pos = TilePos { x, y };
             let tile_entity = commands
                 .spawn(TileBundle {
                     position: tile_pos,
                     tilemap_id: TilemapId(tilemap_entity),
+                    texture_index: tile_texture_index,
                     flip: TileFlip {
                         x: rng.bool(),
                         y: rng.bool(),
-                        d: rng.bool(),
+                        ..default()
                     },
                     ..default()
                 })
