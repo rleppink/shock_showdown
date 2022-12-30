@@ -1,7 +1,13 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Anchor};
+use bevy_ecs_tilemap::prelude::*;
+
+use crate::{MAP_SIZE, MAP_TYPE, TILE_SIZE};
 
 #[derive(Component)]
 pub struct Player;
+
+#[derive(Component)]
+pub struct LastDirection(Vec2);
 
 pub fn spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
@@ -18,14 +24,15 @@ pub fn spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
             ..default()
         },
         Player,
+        LastDirection(Vec2::splat(0.)),
     ));
 }
 
 pub fn move_player(
     keyboard_input: Res<Input<KeyCode>>,
-    mut player_transform_query: Query<&mut Transform, With<Player>>,
+    mut player_query: Query<(&mut Transform, &mut LastDirection), With<Player>>,
 ) {
-    let mut player_transform = player_transform_query.single_mut();
+    let (mut transform, mut last_direction) = player_query.single_mut();
     let mut movement = Vec3::splat(0.);
 
     if keyboard_input.pressed(KeyCode::Left) || keyboard_input.pressed(KeyCode::A) {
