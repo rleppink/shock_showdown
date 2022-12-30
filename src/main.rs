@@ -36,15 +36,16 @@ fn main() {
         .add_startup_system(setup_camera)
         .add_startup_system(map_builder::build_tilemap)
         .add_startup_system(player::spawn)
-        .add_system(player::move_)
+        .add_startup_system(player::setup_hover_rectangle)
         .add_system(player::move_player)
+        .add_system(player::draw_hover_rectangle)
         .run();
 }
 
 fn setup_camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle {
         projection: OrthographicProjection {
-            scale: 0.25,
+            // scale: 0.25,
             ..default()
         },
         ..default()
