@@ -5,6 +5,15 @@ use bevy_turborand::prelude::*;
 pub const MAP_TILE_WIDTH: u32 = 17;
 pub const MAP_TILE_HEIGHT: u32 = 11;
 
+pub const MAP_SIZE: TilemapSize = TilemapSize {
+    x: MAP_TILE_WIDTH,
+    y: MAP_TILE_HEIGHT,
+};
+
+pub const TILE_SIZE: TilemapTileSize = TilemapTileSize { x: 64., y: 64. };
+
+pub const MAP_TYPE: TilemapType = TilemapType::Square;
+
 mod map_builder;
 mod player;
 
