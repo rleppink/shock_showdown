@@ -28,6 +28,7 @@ fn main() {
         .add_startup_system(map_builder::build_tilemap)
         .add_startup_system(player::spawn)
         .add_system(player::move_)
+        .add_system(player::move_player)
         .run();
 }
 
