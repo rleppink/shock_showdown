@@ -16,8 +16,8 @@ pub fn spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
                 .load("sprites/kenney-rtsscifi/PNG/Default size/Unit/scifiUnit_01.png"),
             sprite: Sprite {
                 // color: Color::hex("F40404").unwrap(),
-                custom_size: Some(Vec2::new(92.0, 92.0)),
-                anchor: Anchor::Custom(Vec2::new(0., -0.1)),
+                custom_size: Some(Vec2::new(128.0, 128.0)),
+                anchor: Anchor::Custom(Vec2::new(-0.075, -0.1)),
                 ..default()
             },
             transform: Transform::from_xyz(0., 0., 2.),
@@ -52,15 +52,18 @@ pub fn move_player(
     }
 
     transform.translation += movement;
-    last_direction.0 = movement.normalize().truncate();
 
-    println!("{:?}", last_direction.0);
+    if movement.truncate() == Vec2::splat(0.) {
+        return;
+    }
+
+    last_direction.0 = movement.normalize().truncate();
 }
 
 #[derive(Component)]
 pub struct HoverRectangle;
 
-pub fn setup_hover_rectangle(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn spawn_hover_rectangle(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((
         SpriteBundle {
             texture: asset_server.load("sprites/outline_yellow_64x64.png"),
@@ -95,4 +98,44 @@ pub fn draw_hover_rectangle(
     let mut hover_rectangle_transform = hover_rectangle_query.single_mut();
     hover_rectangle_transform.translation.x = new_tile_world_pos.x;
     hover_rectangle_transform.translation.y = new_tile_world_pos.y;
+}
+
+#[derive(Component)]
+pub struct TargetTile;
+
+pub fn spawn_target_tile(mut commands: Commands, asset_server: Res<AssetServer>) {
+    commands.spawn((
+        SpriteBundle {
+            texture: asset_server.load("sprites/outline_blue_64x64.png"),
+            transform: Transform::from_xyz(0., 0., 1.),
+            ..default()
+        },
+        TargetTile,
+    ));
+}
+
+pub fn print_target_tile(
+    player_query: Query<(&Transform, &LastDirection), (With<Player>, Without<TargetTile>)>,
+    mut target_tile_query: Query<&mut Transform, (With<TargetTile>, Without<Player>)>,
+) {
+    let (transform, last_direction) = player_query.single();
+    let player_translation = transform.translation.truncate();
+    let current_tile_pos: TilePos =
+        match TilePos::from_world_pos(&player_translation, &MAP_SIZE, &TILE_SIZE.into(), &MAP_TYPE)
+        {
+            Some(tile_pos) => tile_pos,
+            None => return,
+        };
+
+    let new_target_tile_pos = TilePos {
+        x: (current_tile_pos.x as f32 + last_direction.0.x) as u32,
+        y: (current_tile_pos.y as f32 + last_direction.0.y) as u32,
+        ..current_tile_pos
+    };
+
+    let new_target_tile_world = new_target_tile_pos.center_in_world(&TILE_SIZE.into(), &MAP_TYPE);
+
+    let mut target_tile = target_tile_query.single_mut();
+    target_tile.translation.x = new_target_tile_world.x;
+    target_tile.translation.y = new_target_tile_world.y;
 }

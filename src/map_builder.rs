@@ -4,14 +4,14 @@ use bevy_ecs_tilemap::{helpers, prelude::*};
 use crate::{MAP_SIZE, MAP_TYPE, TILE_SIZE};
 
 pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let grass_tile_handle: Handle<Image> =
-        asset_server.load("sprites/kenney-rtsscifi/Tilesheet/scifi_tilesheet.png");
+    let tile_image_handle: Handle<Image> =
+        asset_server.load("sprites/kenney_rpgurbanpack/Tilemap/tilemap_packed_64x64.png");
 
-    let mut tile_storage = TileStorage::empty(MAP_SIZE);
     let tilemap_entity = commands.spawn_empty().id();
+    let mut tile_storage = TileStorage::empty(MAP_SIZE);
 
     helpers::filling::fill_tilemap(
-        TileTextureIndex(0),
+        TileTextureIndex(28),
         MAP_SIZE,
         TilemapId(tilemap_entity),
         &mut commands,
@@ -23,7 +23,7 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
         map_type: MAP_TYPE,
         size: MAP_SIZE,
         storage: tile_storage,
-        texture: TilemapTexture::Single(grass_tile_handle),
+        texture: TilemapTexture::Single(tile_image_handle),
         tile_size: TILE_SIZE,
         // transform: get_tilemap_center_transform(&MAP_SIZE, &TILE_SIZE.into(), &MAP_TYPE, 0.),
         ..default()

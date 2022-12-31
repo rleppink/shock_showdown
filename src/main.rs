@@ -36,9 +36,11 @@ fn main() {
         .add_startup_system(setup_camera)
         .add_startup_system(map_builder::build_tilemap)
         .add_startup_system(player::spawn)
-        .add_startup_system(player::setup_hover_rectangle)
+        .add_startup_system(player::spawn_hover_rectangle)
+        .add_startup_system(player::spawn_target_tile)
         .add_system(player::move_player)
         .add_system(player::draw_hover_rectangle)
+        .add_system(player::print_target_tile)
         .run();
 }
 
