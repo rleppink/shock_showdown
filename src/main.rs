@@ -31,13 +31,18 @@ fn main() {
                 .set(ImagePlugin::default_nearest()),
         )
         .add_plugin(TilemapPlugin)
-        .add_plugin(RngPlugin::new().with_rng_seed(123))
-        .insert_resource(ClearColor(Color::rgb(1., 1., 1.)))
+        .add_plugin(RngPlugin::new())
+        .insert_resource(ClearColor(Color::rgb(0.6, 0.6, 0.6)))
         .add_startup_system(setup_camera)
         .add_startup_system(map_builder::build_tilemap)
-        .add_startup_system(player::spawn)
-        .add_startup_system(player::spawn_hover_rectangle)
-        .add_startup_system(player::spawn_target_tile)
+        .add_startup_stage_after(
+            StartupStage::Startup,
+            "player_startup_stage",
+            SystemStage::parallel(),
+        )
+        .add_startup_system_to_stage("player_startup_stage", player::spawn)
+        .add_startup_system_to_stage("player_startup_stage", player::spawn_hover_rectangle)
+        .add_startup_system_to_stage("player_startup_stage", player::spawn_target_tile)
         .add_system(player::move_player)
         .add_system(player::draw_hover_rectangle)
         .add_system(player::print_target_tile)
@@ -47,7 +52,7 @@ fn main() {
 fn setup_camera(mut commands: Commands) {
     commands.spawn(Camera2dBundle {
         projection: OrthographicProjection {
-            // scale: 0.25,
+            scale: 1.25,
             ..default()
         },
         ..default()

@@ -1,7 +1,8 @@
 use bevy::{prelude::*, sprite::Anchor};
 use bevy_ecs_tilemap::prelude::*;
+use bevy_turborand::prelude::*;
 
-use crate::{MAP_SIZE, MAP_TYPE, TILE_SIZE};
+use crate::{map_builder::PlayerSpawn, MAP_SIZE, MAP_TYPE, TILE_SIZE};
 
 #[derive(Component)]
 pub struct Player;
@@ -9,7 +10,19 @@ pub struct Player;
 #[derive(Component)]
 pub struct LastDirection(Vec2);
 
-pub fn spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn spawn(
+    mut commands: Commands,
+    player_spawn_query: Query<(&PlayerSpawn, &TilePos)>,
+    asset_server: Res<AssetServer>,
+    mut global_rng: ResMut<GlobalRng>,
+) {
+    let all_spawns: Vec<(&PlayerSpawn, &TilePos)> = player_spawn_query.iter().collect();
+
+    let mut rng = RngComponent::from(&mut global_rng);
+    let (_player_spawn, tile_pos) = rng.sample(all_spawns.as_slice()).unwrap();
+
+    let spawn_pos = tile_pos.center_in_world(&TILE_SIZE.into(), &MAP_TYPE);
+
     commands.spawn((
         SpriteBundle {
             texture: asset_server
@@ -20,7 +33,7 @@ pub fn spawn(mut commands: Commands, asset_server: Res<AssetServer>) {
                 anchor: Anchor::Custom(Vec2::new(-0.075, -0.1)),
                 ..default()
             },
-            transform: Transform::from_xyz(0., 0., 2.),
+            transform: Transform::from_xyz(spawn_pos.x, spawn_pos.y, 2.),
             ..default()
         },
         Player,
