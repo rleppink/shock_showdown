@@ -14,6 +14,7 @@ pub const TILE_SIZE: TilemapTileSize = TilemapTileSize { x: 64., y: 64. };
 
 pub const MAP_TYPE: TilemapType = TilemapType::Square;
 
+mod collision;
 mod map_builder;
 mod player;
 

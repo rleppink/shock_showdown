@@ -1,8 +1,11 @@
-use bevy::{prelude::*, sprite::Anchor};
+use bevy::{
+    prelude::*,
+    sprite::{collide_aabb::collide, Anchor},
+};
 use bevy_ecs_tilemap::prelude::*;
 use bevy_turborand::prelude::*;
 
-use crate::{map_builder::PlayerSpawn, MAP_SIZE, MAP_TYPE, TILE_SIZE};
+use crate::{collision::Collider, map_builder::PlayerSpawn, MAP_SIZE, MAP_TYPE, TILE_SIZE};
 
 #[derive(Component)]
 pub struct Player;
@@ -44,8 +47,9 @@ pub fn spawn(
 pub fn move_player(
     keyboard_input: Res<Input<KeyCode>>,
     mut player_query: Query<(&mut Transform, &mut LastDirection), With<Player>>,
+    collider_tile_pos_query: Query<&TilePos, (With<Collider>, Without<Player>)>,
 ) {
-    let (mut transform, mut last_direction) = player_query.single_mut();
+    let (mut player_transform, mut last_direction) = player_query.single_mut();
     let mut movement = Vec3::splat(0.);
 
     if keyboard_input.pressed(KeyCode::Left) || keyboard_input.pressed(KeyCode::A) {
@@ -64,7 +68,24 @@ pub fn move_player(
         movement = Vec3::new(0., 4., 0.);
     }
 
-    transform.translation += movement;
+    let mut collided = false;
+    for tile_pos in collider_tile_pos_query.iter() {
+        let tile_in_world: Vec2 = tile_pos.center_in_world(&TILE_SIZE.into(), &MAP_TYPE);
+
+        if let Some(_) = collide(
+            player_transform.translation + movement,
+            Vec2::new(32., 32.),
+            tile_in_world.extend(0.),
+            Vec2::new(64., 64.),
+        ) {
+            collided = true;
+            break;
+        }
+    }
+
+    if !collided {
+        player_transform.translation += movement;
+    }
 
     if movement.truncate() == Vec2::splat(0.) {
         return;

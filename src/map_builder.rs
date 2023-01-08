@@ -3,7 +3,7 @@ use std::fs;
 use bevy::prelude::*;
 use bevy_ecs_tilemap::{helpers, prelude::*};
 
-use crate::{MAP_SIZE, MAP_TYPE, TILE_SIZE};
+use crate::{collision::Collider, MAP_SIZE, MAP_TYPE, TILE_SIZE};
 
 #[derive(Component)]
 pub struct PlayerSpawn {
@@ -62,18 +62,12 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
                     y: y as u32,
                 };
 
-                let spawned_thing = commands.spawn((
+                commands.spawn((
                     TilePos { ..tile_pos },
                     PlayerSpawn {
                         player_number: player_spawn,
                     },
                 ));
-                println!(
-                    "Added spawn: {:?}, {:?} with entity ID: {:#?}",
-                    player_spawn,
-                    tile_pos,
-                    spawned_thing.id()
-                );
                 continue;
             }
         };
@@ -90,6 +84,15 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
                 ..Default::default()
             })
             .id();
+
+        match object_type {
+            ObjectType::PlayerSpawn(_) => (),
+            ObjectType::Empty => (),
+            _ => {
+                commands.entity(tile_entity).insert(Collider);
+            }
+        };
+
         commands.entity(objects_map_entity).add_child(tile_entity);
         object_storage.set(&tile_pos, tile_entity);
     }
@@ -112,7 +115,7 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 enum ObjectType {
     Empty,
     PowerSource,
