@@ -102,7 +102,7 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
         map_type: MAP_TYPE,
         size: MAP_SIZE,
         storage: object_storage,
-        texture: TilemapTexture::Single(tile_image_handle.clone()),
+        texture: TilemapTexture::Single(tile_image_handle),
         tile_size: TILE_SIZE,
         transform: Transform {
             translation: Vec3 {
@@ -135,7 +135,7 @@ enum ObjectType {
 fn read_level() -> Vec<((usize, usize), ObjectType)> {
     const DEFAULT_LEVEL_PATH: &str = "assets/levels/default.txt";
     let default_level = fs::read_to_string(DEFAULT_LEVEL_PATH)
-        .expect(format!("Couldn't read level path: {}", DEFAULT_LEVEL_PATH).as_str());
+        .unwrap_or_else(|_| panic!("Couldn't read level path: {DEFAULT_LEVEL_PATH}"));
 
     let mut tiles = Vec::new();
     for (y, line) in default_level.lines().enumerate() {
@@ -163,7 +163,7 @@ fn read_level() -> Vec<((usize, usize), ObjectType)> {
                 'd' => tiles.push((pos, ObjectType::PowerDrain(None))),
                 '~' => tiles.push((pos, ObjectType::PowerDrain(Some(1)))),
                 ')' => tiles.push((pos, ObjectType::PowerDrain(Some(2)))),
-                c => panic!("Unknown character: '{}' at {:?}", c, pos),
+                c => panic!("Unknown character: '{c}' at {pos:?}"),
             }
         }
     }

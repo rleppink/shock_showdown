@@ -9,6 +9,7 @@ use crate::{
 #[derive(Component, Debug)]
 pub struct TargetTile(pub TilePos);
 
+#[allow(clippy::type_complexity)] // Seriously not that bad
 pub fn update_player_target(
     mut commands: Commands,
     player_query: Query<
@@ -31,10 +32,7 @@ pub fn update_player_target(
         let target_tile_pos = TilePos {
             x: (current_tile_pos.x as f32 + player_last_direction.0.x) as u32,
             y: (current_tile_pos.y as f32 + player_last_direction.0.y) as u32,
-            ..current_tile_pos
         };
-
-        println!("Set target tile {:?}", target_tile_pos);
 
         commands
             .entity(player_entity)
@@ -57,13 +55,13 @@ pub fn spawn_target_tile_outline(mut commands: Commands, asset_server: Res<Asset
 }
 
 pub fn move_target_tile_outline(
-    target_tile__query: Query<&TargetTile, (With<Player>, Without<TargetTileOutline>)>,
+    target_tile_query: Query<&TargetTile, (With<Player>, Without<TargetTileOutline>)>,
     mut target_tile_outline_query: Query<
         &mut Transform,
         (With<TargetTileOutline>, Without<Player>),
     >,
 ) {
-    let target_tile = match target_tile__query.get_single() {
+    let target_tile = match target_tile_query.get_single() {
         Ok(t) => t,
         Err(_) => return,
     };

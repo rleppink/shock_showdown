@@ -72,12 +72,14 @@ pub fn move_player(
     for tile_pos in collider_tile_pos_query.iter() {
         let tile_in_world: Vec2 = tile_pos.center_in_world(&TILE_SIZE.into(), &MAP_TYPE);
 
-        if let Some(_) = collide(
+        if collide(
             player_transform.translation + movement,
             Vec2::new(32., 32.),
             tile_in_world.extend(0.),
             Vec2::new(64., 64.),
-        ) {
+        )
+        .is_some()
+        {
             collided = true;
             break;
         }
