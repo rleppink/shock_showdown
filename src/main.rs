@@ -17,6 +17,7 @@ pub const MAP_TYPE: TilemapType = TilemapType::Square;
 mod collision;
 mod map_builder;
 mod player;
+mod target_tile;
 
 fn main() {
     App::new()
@@ -43,10 +44,14 @@ fn main() {
         )
         .add_startup_system_to_stage("player_startup_stage", player::spawn)
         .add_startup_system_to_stage("player_startup_stage", player::spawn_hover_rectangle)
-        .add_startup_system_to_stage("player_startup_stage", player::spawn_target_tile)
+        .add_startup_system_to_stage(
+            "player_startup_stage",
+            target_tile::spawn_target_tile_outline,
+        )
         .add_system(player::move_player)
         .add_system(player::draw_hover_rectangle)
-        .add_system(player::print_target_tile)
+        .add_system(target_tile::move_target_tile_outline)
+        .add_system(target_tile::update_player_target)
         .run();
 }
 
