@@ -6,8 +6,10 @@ use bevy_ecs_tilemap::prelude::*;
 use bevy_turborand::prelude::*;
 
 use crate::{
-    collision::Collider, map_builder::PlayerSpawn, target_tile::TargetTile, MAP_SIZE, MAP_TYPE,
-    TILE_SIZE,
+    collision::Collider,
+    map_builder::{ObjectType, PlayerSpawn},
+    target_tile::TargetTile,
+    MAP_SIZE, MAP_TYPE, TILE_SIZE,
 };
 
 #[derive(Component)]
@@ -143,18 +145,24 @@ pub fn pick_up_block(
     mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     target_tile_query: Query<&TargetTile>,
-    tile_query: Query<(Entity, &TilePos), With<TilemapId>>,
+    tile_query: Query<(Entity, &TilePos, &ObjectType), With<TilemapId>>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::Space) {
         return;
     }
 
     let target_tile_pos = target_tile_query.single().0;
-    for (tile_entity, tile_position) in tile_query.iter() {
+    for (tile_entity, tile_position, object_type) in tile_query.iter() {
         if target_tile_pos != *tile_position {
             continue;
         }
 
-        commands.entity(tile_entity).despawn();
+        match object_type {
+            ObjectType::MovableConduit => {
+                // TODO: Remove tiles from storage!
+                commands.entity(tile_entity).despawn_recursive();
+            }
+            _ => continue,
+        }
     }
 }

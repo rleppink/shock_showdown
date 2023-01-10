@@ -93,6 +93,7 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
             }
         };
 
+        commands.entity(tile_entity).insert(object_type);
         commands.entity(objects_map_entity).add_child(tile_entity);
         object_storage.set(&tile_pos, tile_entity);
     }
@@ -115,8 +116,8 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-#[derive(Debug, PartialEq)]
-enum ObjectType {
+#[derive(Component, Debug, PartialEq)]
+pub enum ObjectType {
     Empty,
     PowerSource,
 
