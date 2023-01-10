@@ -18,6 +18,9 @@ pub struct Player;
 #[derive(Component)]
 pub struct LastDirection(pub Vec2);
 
+#[derive(Component)]
+pub struct Carried(ObjectType);
+
 pub fn spawn(
     mut commands: Commands,
     player_spawn_query: Query<(&PlayerSpawn, &TilePos)>,
@@ -141,28 +144,39 @@ pub fn draw_hover_rectangle(
     hover_rectangle_transform.translation.y = new_tile_world_pos.y;
 }
 
-pub fn pick_up_block(
+pub fn pick_up_or_throw(
     mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     target_tile_query: Query<&TargetTile>,
     tile_query: Query<(Entity, &TilePos, &ObjectType), With<TilemapId>>,
+    carried_query: Query<(Entity, Option<&Carried>), With<Player>>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::Space) {
         return;
     }
 
-    let target_tile_pos = target_tile_query.single().0;
-    for (tile_entity, tile_position, object_type) in tile_query.iter() {
-        if target_tile_pos != *tile_position {
-            continue;
+    let (player_entity, maybe_carried) = carried_query.single();
+    match maybe_carried {
+        Some(_) => {
+            commands.entity(player_entity).remove::<Carried>();
         }
+        None => {
+            let target_tile_pos = target_tile_query.single().0;
+            for (tile_entity, tile_position, object_type) in tile_query.iter() {
+                if target_tile_pos != *tile_position {
+                    continue;
+                }
 
-        match object_type {
-            ObjectType::MovableConduit => {
-                // TODO: Remove tiles from storage!
-                commands.entity(tile_entity).despawn_recursive();
+                match object_type {
+                    ObjectType::MovableConduit => {
+                        commands.entity(player_entity).insert(Carried(*object_type));
+
+                        // TODO: Remove tiles from storage!
+                        commands.entity(tile_entity).despawn_recursive();
+                    }
+                    _ => continue,
+                }
             }
-            _ => continue,
         }
     }
 }

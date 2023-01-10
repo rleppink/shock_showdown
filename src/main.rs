@@ -52,7 +52,7 @@ fn main() {
         .add_system(player::draw_hover_rectangle)
         .add_system(target_tile::update_player_target)
         .add_system(target_tile::move_target_tile_outline)
-        .add_system(player::pick_up_block)
+        .add_system(player::pick_up_or_throw)
         .run();
 }
 

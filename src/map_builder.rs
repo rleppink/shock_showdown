@@ -116,7 +116,7 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
     });
 }
 
-#[derive(Component, Debug, PartialEq)]
+#[derive(Component, Debug, PartialEq, Copy)]
 pub enum ObjectType {
     Empty,
     PowerSource,
