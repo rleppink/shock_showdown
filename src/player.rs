@@ -5,7 +5,10 @@ use bevy::{
 use bevy_ecs_tilemap::prelude::*;
 use bevy_turborand::prelude::*;
 
-use crate::{collision::Collider, map_builder::PlayerSpawn, MAP_SIZE, MAP_TYPE, TILE_SIZE};
+use crate::{
+    collision::Collider, map_builder::PlayerSpawn, target_tile::TargetTile, MAP_SIZE, MAP_TYPE,
+    TILE_SIZE,
+};
 
 #[derive(Component)]
 pub struct Player;
@@ -134,4 +137,24 @@ pub fn draw_hover_rectangle(
     let mut hover_rectangle_transform = hover_rectangle_query.single_mut();
     hover_rectangle_transform.translation.x = new_tile_world_pos.x;
     hover_rectangle_transform.translation.y = new_tile_world_pos.y;
+}
+
+pub fn pick_up_block(
+    mut commands: Commands,
+    keyboard_input: Res<Input<KeyCode>>,
+    target_tile_query: Query<&TargetTile>,
+    tile_query: Query<(Entity, &TilePos), With<TilemapId>>,
+) {
+    if !keyboard_input.just_pressed(KeyCode::Space) {
+        return;
+    }
+
+    let target_tile_pos = target_tile_query.single().0;
+    for (tile_entity, tile_position) in tile_query.iter() {
+        if target_tile_pos != *tile_position {
+            continue;
+        }
+
+        commands.entity(tile_entity).despawn();
+    }
 }

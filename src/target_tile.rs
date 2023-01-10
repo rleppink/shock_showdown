@@ -9,7 +9,7 @@ use crate::{
 #[derive(Component, Debug)]
 pub struct TargetTile(pub TilePos);
 
-#[allow(clippy::type_complexity)] // Seriously not that bad
+#[allow(clippy::type_complexity)] // It's not that bad, definitely in light of Bevy queries
 pub fn update_player_target(
     mut commands: Commands,
     player_query: Query<
