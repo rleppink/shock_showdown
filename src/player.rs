@@ -150,6 +150,7 @@ pub fn pick_up_or_throw(
     target_tile_query: Query<&TargetTile>,
     tile_query: Query<(Entity, &TilePos, &ObjectType), With<TilemapId>>,
     carried_query: Query<(Entity, Option<&Carried>), With<Player>>,
+    mut tile_storage_query: Query<(&mut TileStorage, &Transform)>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::Space) {
         return;
@@ -159,6 +160,8 @@ pub fn pick_up_or_throw(
     match maybe_carried {
         Some(_) => {
             commands.entity(player_entity).remove::<Carried>();
+
+            // TODO: Throw!
         }
         None => {
             let target_tile_pos = target_tile_query.single().0;
@@ -167,14 +170,19 @@ pub fn pick_up_or_throw(
                     continue;
                 }
 
-                match object_type {
-                    ObjectType::MovableConduit => {
-                        commands.entity(player_entity).insert(Carried(*object_type));
+                if let ObjectType::MovableConduit = object_type {
+                    commands.entity(player_entity).insert(Carried(*object_type));
 
-                        // TODO: Remove tiles from storage!
-                        commands.entity(tile_entity).despawn_recursive();
+                    commands.entity(tile_entity).despawn_recursive();
+                    for (mut tile_storage, transform) in tile_storage_query.iter_mut() {
+                        if transform.translation.z == 0. {
+                            continue;
+                        }
+
+                        tile_storage.remove(tile_position);
                     }
-                    _ => continue,
+                } else {
+                    continue;
                 }
             }
         }
