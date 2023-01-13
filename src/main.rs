@@ -35,6 +35,7 @@ fn main() {
         .add_plugin(TilemapPlugin)
         .add_plugin(RngPlugin::new())
         .insert_resource(ClearColor(Color::rgb(0.6, 0.6, 0.6)))
+        .add_event::<player::ThrowEvent>()
         .add_startup_system(setup_camera)
         .add_startup_system(map_builder::build_tilemap)
         .add_startup_stage_after(
@@ -53,6 +54,7 @@ fn main() {
         .add_system(target_tile::update_player_target)
         .add_system(target_tile::move_target_tile_outline)
         .add_system(player::pick_up_or_throw)
+        .add_system(player::throw_blocks.after(player::pick_up_or_throw))
         .run();
 }
 

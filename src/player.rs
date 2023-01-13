@@ -144,6 +144,9 @@ pub fn draw_hover_rectangle(
     hover_rectangle_transform.translation.y = new_tile_world_pos.y;
 }
 
+pub struct ThrowEvent;
+
+// This function really needs some refactoring, it's doing too much
 pub fn pick_up_or_throw(
     mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
@@ -151,6 +154,7 @@ pub fn pick_up_or_throw(
     tile_query: Query<(Entity, &TilePos, &ObjectType), With<TilemapId>>,
     carried_query: Query<(Entity, Option<&Carried>), With<Player>>,
     mut tile_storage_query: Query<(&mut TileStorage, &Transform)>,
+    mut throw_event_writer: EventWriter<ThrowEvent>,
 ) {
     if !keyboard_input.just_pressed(KeyCode::Space) {
         return;
@@ -162,6 +166,8 @@ pub fn pick_up_or_throw(
             commands.entity(player_entity).remove::<Carried>();
 
             // TODO: Throw!
+            // First step, place a block in front of the player
+            throw_event_writer.send(ThrowEvent);
         }
         None => {
             let target_tile_pos = target_tile_query.single().0;
@@ -186,5 +192,11 @@ pub fn pick_up_or_throw(
                 }
             }
         }
+    }
+}
+
+pub fn throw_blocks(mut throw_events: EventReader<ThrowEvent>) {
+    for _throw_event in throw_events.iter() {
+        println!("Throw stuff!");
     }
 }
