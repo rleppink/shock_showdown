@@ -144,7 +144,8 @@ pub fn draw_hover_rectangle(
     hover_rectangle_transform.translation.y = new_tile_world_pos.y;
 }
 
-pub struct ThrowEvent;
+#[derive(Debug)]
+pub struct ThrowEvent(Entity, TilePos);
 
 // This function really needs some refactoring, it's doing too much
 pub fn pick_up_or_throw(
@@ -161,16 +162,12 @@ pub fn pick_up_or_throw(
     }
 
     let (player_entity, maybe_carried) = carried_query.single();
+    let target_tile_pos = target_tile_query.single().0;
     match maybe_carried {
         Some(_) => {
-            commands.entity(player_entity).remove::<Carried>();
-
-            // TODO: Throw!
-            // First step, place a block in front of the player
-            throw_event_writer.send(ThrowEvent);
+            throw_event_writer.send(ThrowEvent(player_entity, target_tile_pos));
         }
         None => {
-            let target_tile_pos = target_tile_query.single().0;
             for (tile_entity, tile_position, object_type) in tile_query.iter() {
                 if target_tile_pos != *tile_position {
                     continue;
@@ -195,8 +192,40 @@ pub fn pick_up_or_throw(
     }
 }
 
-pub fn throw_blocks(mut throw_events: EventReader<ThrowEvent>) {
-    for _throw_event in throw_events.iter() {
-        println!("Throw stuff!");
+pub fn throw_blocks(
+    mut throw_events: EventReader<ThrowEvent>,
+    mut tilemap_query: Query<(Entity, &mut TileStorage, &Transform)>,
+    mut commands: Commands,
+) {
+    let (tilemap_entity, mut tile_storage, _) = tilemap_query
+        .iter_mut()
+        .find(|(_, _, transform)| transform.translation.z == 1.)
+        .expect("There should only be one layer 1 tile storage");
+
+    for throw_event in throw_events.iter() {
+        let player_entity = throw_event.0;
+        let throw_target = throw_event.1;
+
+        if tile_storage.get(&throw_target).is_some() {
+            // We don't want to throw on top of other blocks
+            continue;
+        }
+
+        commands.entity(player_entity).remove::<Carried>();
+        let tile_entity = commands
+            .spawn((
+                TileBundle {
+                    position: throw_target,
+                    tilemap_id: TilemapId(tilemap_entity),
+                    texture_index: TileTextureIndex(5),
+                    ..default()
+                },
+                ObjectType::MovableConduit,
+                Collider,
+            ))
+            .id();
+
+        commands.entity(tilemap_entity).add_child(tile_entity);
+        tile_storage.set(&throw_target, tile_entity);
     }
 }
