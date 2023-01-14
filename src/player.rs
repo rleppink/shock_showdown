@@ -41,7 +41,7 @@ pub fn spawn(
             sprite: Sprite {
                 // color: Color::hex("F40404").unwrap(),
                 custom_size: Some(Vec2::new(128.0, 128.0)),
-                anchor: Anchor::Custom(Vec2::new(-0.075, -0.1)),
+                // anchor: Anchor::Custom(Vec2::new(-0.075, -0.1)),
                 ..default()
             },
             transform: Transform::from_xyz(spawn_pos.x, spawn_pos.y, 2.),
