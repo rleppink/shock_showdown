@@ -19,6 +19,21 @@ mod map_builder;
 mod player;
 mod target_tile;
 
+pub mod prelude {
+    pub use bevy::prelude::*;
+    pub use bevy_ecs_tilemap::prelude::*;
+    pub use bevy_turborand::prelude::*;
+
+    pub use crate::MAP_SIZE;
+    pub use crate::MAP_TYPE;
+    pub use crate::TILE_SIZE;
+
+    pub use crate::collision::*;
+    pub use crate::map_builder::*;
+    pub use crate::player::*;
+    pub use crate::target_tile::*;
+}
+
 fn main() {
     App::new()
         .add_plugins(
