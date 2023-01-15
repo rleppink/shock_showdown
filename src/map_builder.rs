@@ -54,6 +54,8 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
             ObjectType::MovableConduit => 5,
             ObjectType::Antenna(_) => 6,
             ObjectType::LogicalAnd => 7,
+            ObjectType::LeftRightConduit => 8,
+            ObjectType::TopBottomConduit => 9,
             ObjectType::PlayerSpawn(player_spawn) => {
                 // This is most certainly not the right place for this code, but
                 // it gets it there. That's fine for now.
@@ -128,6 +130,8 @@ pub enum ObjectType {
     Wall,
     MovableConduit,
     ImmovableConduit,
+    LeftRightConduit,
+    TopBottomConduit,
     Antenna(u8),
     PlayerSpawn(u8),
     LogicalAnd,
@@ -138,8 +142,14 @@ fn read_level() -> Vec<((usize, usize), ObjectType)> {
     let default_level = fs::read_to_string(DEFAULT_LEVEL_PATH)
         .unwrap_or_else(|_| panic!("Couldn't read level path: {DEFAULT_LEVEL_PATH}"));
 
+    // Our level.txt has top left as 0,0
+    // bevy_ecs_tilemap sees bottom left as 0,0
+    // Reverse the lines in our level.txt to get the correct layout
+    let mut lines: Vec<&str> = default_level.lines().collect();
+    lines.reverse();
+
     let mut tiles = Vec::new();
-    for (y, line) in default_level.lines().enumerate() {
+    for (y, line) in lines.iter().enumerate() {
         for (x, character) in line.chars().enumerate() {
             let pos = (x, y);
             match character {
@@ -164,6 +174,8 @@ fn read_level() -> Vec<((usize, usize), ObjectType)> {
                 'd' => tiles.push((pos, ObjectType::PowerDrain(None))),
                 '~' => tiles.push((pos, ObjectType::PowerDrain(Some(1)))),
                 ')' => tiles.push((pos, ObjectType::PowerDrain(Some(2)))),
+                'l' => tiles.push((pos, ObjectType::LeftRightConduit)),
+                't' => tiles.push((pos, ObjectType::TopBottomConduit)),
                 c => panic!("Unknown character: '{c}' at {pos:?}"),
             }
         }
