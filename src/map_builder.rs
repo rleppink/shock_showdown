@@ -53,7 +53,7 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
             ObjectType::ImmovableConduit => 4,
             ObjectType::MovableConduit => 5,
             ObjectType::Antenna(_) => 6,
-            ObjectType::LogicalAnd => 7,
+            ObjectType::ThreeWayConductor => 7,
             ObjectType::LeftRightConduit => 8,
             ObjectType::TopBottomConduit => 9,
             ObjectType::PlayerSpawn(player_spawn) => {
@@ -90,10 +90,36 @@ pub fn build_tilemap(mut commands: Commands, asset_server: Res<AssetServer>) {
         match object_type {
             ObjectType::PlayerSpawn(_) => (),
             ObjectType::Empty => (),
-            _ => {
+            ObjectType::PowerSource
+            | ObjectType::PowerDrain(_)
+            | ObjectType::Wall
+            | ObjectType::MovableConduit
+            | ObjectType::ImmovableConduit
+            | ObjectType::LeftRightConduit
+            | ObjectType::TopBottomConduit
+            | ObjectType::Antenna(_)
+            | ObjectType::ThreeWayConductor => {
                 commands.entity(tile_entity).insert(Collider);
             }
         };
+
+        match object_type {
+            ObjectType::Empty => (),
+            ObjectType::PowerSource => (),
+            ObjectType::PowerDrain(_) => (),
+            ObjectType::Wall => (),
+            ObjectType::MovableConduit
+            | ObjectType::ImmovableConduit
+            | ObjectType::LeftRightConduit
+            | ObjectType::TopBottomConduit
+            | ObjectType::Antenna(_) => {
+                commands.entity(tile_entity).insert(Conductor);
+            }
+            ObjectType::PlayerSpawn(_) => (),
+            ObjectType::ThreeWayConductor => {
+                commands.entity(tile_entity).insert(ThreeWayConductor);
+            }
+        }
 
         commands.entity(tile_entity).insert(object_type);
         commands.entity(objects_map_entity).add_child(tile_entity);
@@ -134,7 +160,7 @@ pub enum ObjectType {
     TopBottomConduit,
     Antenna(u8),
     PlayerSpawn(u8),
-    LogicalAnd,
+    ThreeWayConductor,
 }
 
 fn read_level() -> Vec<((usize, usize), ObjectType)> {
@@ -170,7 +196,7 @@ fn read_level() -> Vec<((usize, usize), ObjectType)> {
                 '4' => tiles.push((pos, ObjectType::PlayerSpawn(4))),
                 '5' => tiles.push((pos, ObjectType::PlayerSpawn(5))),
                 '6' => tiles.push((pos, ObjectType::PlayerSpawn(6))),
-                'a' => tiles.push((pos, ObjectType::LogicalAnd)),
+                'a' => tiles.push((pos, ObjectType::ThreeWayConductor)),
                 'd' => tiles.push((pos, ObjectType::PowerDrain(None))),
                 '~' => tiles.push((pos, ObjectType::PowerDrain(Some(1)))),
                 ')' => tiles.push((pos, ObjectType::PowerDrain(Some(2)))),
@@ -183,3 +209,9 @@ fn read_level() -> Vec<((usize, usize), ObjectType)> {
 
     tiles
 }
+
+#[derive(Component)]
+pub struct Conductor;
+
+#[derive(Component)]
+pub struct ThreeWayConductor;
