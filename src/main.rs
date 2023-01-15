@@ -69,6 +69,7 @@ fn main() {
         .add_system(target_tile::update_player_target)
         .add_system(target_tile::move_target_tile_outline)
         .add_system(player::pick_up_or_throw)
+        .add_system(player::update_players_tile_pos.after(player::move_player))
         .add_system(player::throw_blocks.after(player::pick_up_or_throw))
         .run();
 }
