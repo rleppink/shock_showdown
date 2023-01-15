@@ -27,4 +27,8 @@ pub struct Carried(ObjectType);
 pub struct HoverRectangle;
 
 #[derive(Debug)]
-pub struct ThrowEvent(Entity, TilePos);
+pub struct ThrowEvent {
+    player_entity: Entity,
+    origin_tile: TilePos,
+    direction: IntVec2,
+}
