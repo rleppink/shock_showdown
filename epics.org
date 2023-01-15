@@ -1,0 +1,28 @@
+#+title: Epics
+
+* MVP
+** TODO 2 players, one host
+*** TODO Spawn another player, with ID
+
+*** TODO Make WASD control player 1, arrows player 0
+p1 'Tab' for pickup/throw
+p0 '/' for pickup/throw
+
+*** TODO Make players correctly spawn in different teams
+
+*** TODO Fix multiplayer broken systems
+
+** TODO Calculate electricity path
+From power source to antennas/team power drains
+
+** TODO Disable antennas, players
+
+** TODO Add win condition
+
+** TODO Add networking
+
+* Extra
+** TODO Throw animation
+** TODO Electricity coloring
+** TODO Player animation
+** TODO Menu
