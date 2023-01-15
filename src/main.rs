@@ -18,6 +18,7 @@ mod collision;
 mod map_builder;
 mod player;
 mod target_tile;
+mod util;
 
 pub mod prelude {
     pub use bevy::prelude::*;
@@ -32,6 +33,7 @@ pub mod prelude {
     pub use crate::map_builder::*;
     pub use crate::player::*;
     pub use crate::target_tile::*;
+    pub use crate::util::*;
 }
 
 fn main() {
@@ -47,10 +49,14 @@ fn main() {
                 })
                 .set(ImagePlugin::default_nearest()),
         )
+        // Plugins
         .add_plugin(TilemapPlugin)
         .add_plugin(RngPlugin::new())
+        // Resources
         .insert_resource(ClearColor(Color::rgb(0.6, 0.6, 0.6)))
+        // Events
         .add_event::<player::ThrowEvent>()
+        // Startup
         .add_startup_system(setup_camera)
         .add_startup_system(map_builder::build_tilemap)
         .add_startup_stage_after(
