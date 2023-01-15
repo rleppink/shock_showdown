@@ -26,7 +26,7 @@ pub fn update_player_target(
             &MAP_TYPE,
         ) {
             Some(tile_pos) => tile_pos,
-            None => return,
+            None => continue,
         };
 
         let target_tile_pos = TilePos {
