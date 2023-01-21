@@ -15,7 +15,7 @@ pub use throw::*;
 pub use update_tile_pos::*;
 
 #[derive(Component)]
-pub struct Player;
+pub struct Player(pub u8);
 
 #[derive(Component)]
 pub struct LastDirection(pub Vec2);
@@ -24,7 +24,7 @@ pub struct LastDirection(pub Vec2);
 pub struct Carried(ObjectType);
 
 #[derive(Component)]
-pub struct HoverRectangle;
+pub struct HoverRectangle(pub u8);
 
 #[derive(Debug)]
 pub struct ThrowEvent {

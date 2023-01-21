@@ -72,6 +72,7 @@ fn main() {
         )
         // Systems
         .add_system(player::move_player)
+        .add_system(player::move_player_6)
         .add_system(player::update_players_tile_pos.after(player::move_player))
         .add_system(player::draw_hover_rectangle.after(player::move_player))
         .add_system(target_tile::update_player_target.after(player::move_player))

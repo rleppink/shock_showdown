@@ -6,29 +6,52 @@ pub fn spawn(
     mut commands: Commands,
     player_spawn_query: Query<(&PlayerSpawn, &TilePos)>,
     asset_server: Res<AssetServer>,
-    mut global_rng: ResMut<GlobalRng>,
 ) {
-    let all_spawns: Vec<(&PlayerSpawn, &TilePos)> = player_spawn_query.iter().collect();
+    let spawn_p1 = player_spawn_query
+        .iter()
+        .filter(|(player_spawn, _)| player_spawn.player_number == 1)
+        .map(|(_, spawn_tile_pos)| spawn_tile_pos)
+        .next()
+        .unwrap();
 
-    let mut rng = RngComponent::from(&mut global_rng);
-    let (_player_spawn, tile_pos) = rng.sample(all_spawns.as_slice()).unwrap();
-
-    let spawn_pos = tile_pos.center_in_world(&TILE_SIZE.into(), &MAP_TYPE);
-
+    let spawn_pos_p1 = spawn_p1.center_in_world(&TILE_SIZE.into(), &MAP_TYPE);
     commands.spawn((
         SpriteBundle {
             texture: asset_server
                 .load("sprites/kenney-rtsscifi/PNG/Default size/Unit/scifiUnit_01.png"),
             sprite: Sprite {
-                // color: Color::hex("F40404").unwrap(),
+                color: Color::hex("0000FF").unwrap(),
                 custom_size: Some(Vec2::new(128.0, 128.0)),
-                // anchor: Anchor::Custom(Vec2::new(-0.075, -0.1)),
                 ..default()
             },
-            transform: Transform::from_xyz(spawn_pos.x, spawn_pos.y, 2.),
+            transform: Transform::from_xyz(spawn_pos_p1.x, spawn_pos_p1.y, 2.),
             ..default()
         },
-        Player,
+        Player(1),
+        LastDirection(Vec2::splat(0.)),
+    ));
+
+    let spawn_p6 = player_spawn_query
+        .iter()
+        .filter(|(player_spawn, _)| player_spawn.player_number == 6)
+        .map(|(_, spawn_tile_pos)| spawn_tile_pos)
+        .next()
+        .unwrap();
+
+    let spawn_pos_p6 = spawn_p6.center_in_world(&TILE_SIZE.into(), &MAP_TYPE);
+    commands.spawn((
+        SpriteBundle {
+            texture: asset_server
+                .load("sprites/kenney-rtsscifi/PNG/Default size/Unit/scifiUnit_01.png"),
+            sprite: Sprite {
+                color: Color::hex("FF0000").unwrap(),
+                custom_size: Some(Vec2::new(128.0, 128.0)),
+                ..default()
+            },
+            transform: Transform::from_xyz(spawn_pos_p6.x, spawn_pos_p6.y, 2.),
+            ..default()
+        },
+        Player(6),
         LastDirection(Vec2::splat(0.)),
     ));
 }

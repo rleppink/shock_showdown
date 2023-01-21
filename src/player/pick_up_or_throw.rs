@@ -2,7 +2,8 @@ use crate::prelude::*;
 
 use super::{Carried, Player, ThrowEvent};
 
-// This function really needs some refactoring, it's doing too much
+// TODO: This function really needs some refactoring, it's doing too much
+#[allow(clippy::type_complexity)]
 pub fn pick_up_or_throw(
     mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
