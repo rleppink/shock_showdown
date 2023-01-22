@@ -20,7 +20,7 @@ pub fn spawn(
             texture: asset_server
                 .load("sprites/kenney-rtsscifi/PNG/Default size/Unit/scifiUnit_01.png"),
             sprite: Sprite {
-                color: Color::hex("0000FF").unwrap(),
+                color: Color::hex("7777FF").unwrap(),
                 custom_size: Some(Vec2::new(128.0, 128.0)),
                 ..default()
             },
@@ -44,7 +44,7 @@ pub fn spawn(
             texture: asset_server
                 .load("sprites/kenney-rtsscifi/PNG/Default size/Unit/scifiUnit_01.png"),
             sprite: Sprite {
-                color: Color::hex("FF0000").unwrap(),
+                color: Color::hex("FF7777").unwrap(),
                 custom_size: Some(Vec2::new(128.0, 128.0)),
                 ..default()
             },
