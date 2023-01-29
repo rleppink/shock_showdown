@@ -1,14 +1,20 @@
 #+title: Epics
 
 * MVP
-** TODO 2 players, one host
-*** DONE Spawn another player, with ID
+** Archive :ARCHIVE:
+*** DONE 2 players, one host
+:PROPERTIES:
+:ARCHIVE_TIME: 2023-01-29 Sun 20:05
+:END:
+**** DONE Spawn another player, with ID
 
-*** DONE Make players correctly spawn in different teams
+**** DONE Make players correctly spawn in different teams
 
-*** DONE Fix hover rectangle
+**** DONE Fix hover rectangle
 
-*** TODO Make WASD control player 1, arrows player 0
+**** DONE Make WASD move player 1, arrows player 0
+
+**** DONE Make pickup/throw follow keymap
 p1 'Tab' for pickup/throw
 p0 '/' for pickup/throw
 
