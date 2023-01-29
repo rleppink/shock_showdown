@@ -2,15 +2,15 @@
 
 * MVP
 ** TODO 2 players, one host
-*** TODO Spawn another player, with ID
+*** DONE Spawn another player, with ID
+
+*** DONE Make players correctly spawn in different teams
+
+*** DONE Fix hover rectangle
 
 *** TODO Make WASD control player 1, arrows player 0
 p1 'Tab' for pickup/throw
 p0 '/' for pickup/throw
-
-*** TODO Make players correctly spawn in different teams
-
-*** TODO Fix multiplayer broken systems
 
 ** TODO Calculate electricity path
 From power source to antennas/team power drains

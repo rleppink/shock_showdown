@@ -64,10 +64,15 @@ fn main() {
             "player_startup_stage",
             SystemStage::parallel(),
         )
-        .add_startup_system_to_stage("player_startup_stage", player::spawn)
-        .add_startup_system_to_stage("player_startup_stage", player::spawn_hover_rectangle)
-        .add_startup_system_to_stage(
+        .add_startup_stage_after(
             "player_startup_stage",
+            "after_player_spawned",
+            SystemStage::parallel(),
+        )
+        .add_startup_system_to_stage("player_startup_stage", player::spawn)
+        .add_startup_system_to_stage("after_player_spawned", player::spawn_hover_rectangle)
+        .add_startup_system_to_stage(
+            "after_player_spawned",
             target_tile::spawn_target_tile_outline,
         )
         // Systems

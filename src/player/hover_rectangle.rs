@@ -23,45 +23,28 @@ pub fn draw_hover_rectangle(
     player_query: Query<(&Player, &Transform), Without<HoverRectangle>>,
     mut hover_rectangle_query: Query<(&mut Transform, &HoverRectangle), Without<Player>>,
 ) {
-    let player_transform: Transform = *player_query
-        .iter()
-        .find_map(
-            |(player, transform)| {
-                if player.0 == 1 {
-                    Some(transform)
-                } else {
-                    None
+    for (player, player_transform) in player_query.iter() {
+        for (mut hover_rectangle_transform, hover_rectangle) in hover_rectangle_query.iter_mut() {
+            if hover_rectangle.0 == player.0 {
+                let player_translation_2d = player_transform.translation.truncate();
+                let new_tile_pos = TilePos::from_world_pos(
+                    &player_translation_2d,
+                    &MAP_SIZE,
+                    &TILE_SIZE.into(),
+                    &MAP_TYPE,
+                );
+
+                if new_tile_pos.is_none() {
+                    return;
                 }
-            },
-        )
-        .unwrap();
 
-    let player_translation_2d = player_transform.translation.truncate();
-    let new_tile_pos = TilePos::from_world_pos(
-        &player_translation_2d,
-        &MAP_SIZE,
-        &TILE_SIZE.into(),
-        &MAP_TYPE,
-    );
+                let new_tile_world_pos = new_tile_pos
+                    .unwrap()
+                    .center_in_world(&TILE_SIZE.into(), &MAP_TYPE);
 
-    if new_tile_pos.is_none() {
-        return;
-    }
-
-    let new_tile_world_pos = new_tile_pos
-        .unwrap()
-        .center_in_world(&TILE_SIZE.into(), &MAP_TYPE);
-
-    let mut hover_rectangle_transform = hover_rectangle_query
-        .iter_mut()
-        .find_map(|(transform, hover_rectangle)| {
-            if hover_rectangle.0 == 1 {
-                Some(transform)
-            } else {
-                None
+                hover_rectangle_transform.translation.x = new_tile_world_pos.x;
+                hover_rectangle_transform.translation.y = new_tile_world_pos.y;
             }
-        })
-        .unwrap();
-    hover_rectangle_transform.translation.x = new_tile_world_pos.x;
-    hover_rectangle_transform.translation.y = new_tile_world_pos.y;
+        }
+    }
 }
