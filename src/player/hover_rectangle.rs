@@ -2,15 +2,21 @@ use crate::prelude::*;
 
 use super::{HoverRectangle, Player};
 
-pub fn spawn_hover_rectangle(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn((
-        SpriteBundle {
-            texture: asset_server.load("sprites/outline_yellow_64x64.png"),
-            transform: Transform::from_xyz(0., 0., 1.),
-            ..default()
-        },
-        HoverRectangle(1),
-    ));
+pub fn spawn_hover_rectangle(
+    mut commands: Commands,
+    players_query: Query<&Player>,
+    asset_server: Res<AssetServer>,
+) {
+    for player in players_query.iter() {
+        commands.spawn((
+            SpriteBundle {
+                texture: asset_server.load("sprites/outline_yellow_64x64.png"),
+                transform: Transform::from_xyz(0., 0., 1.),
+                ..default()
+            },
+            HoverRectangle(player.0),
+        ));
+    }
 }
 
 pub fn draw_hover_rectangle(
