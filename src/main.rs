@@ -78,11 +78,11 @@ fn main() {
         )
         // Systems
         .add_system(player::move_players)
-        .add_system(player::update_players_tile_pos.after(player::move_player))
-        .add_system(player::draw_hover_rectangle.after(player::move_player))
-        .add_system(target_tile::update_player_target.after(player::move_player))
-        .add_system(target_tile::move_target_tile_outline.after(player::move_player))
-        .add_system(player::pick_up_or_throw.after(player::move_player))
+        .add_system(player::update_players_tile_pos.after(player::move_players))
+        .add_system(player::draw_hover_rectangle.after(player::move_players))
+        .add_system(target_tile::update_player_target.after(player::move_players))
+        .add_system(target_tile::move_target_tile_outline.after(player::move_players))
+        .add_system(player::pick_up_or_throw.after(player::move_players))
         .add_system(player::throw_blocks.after(player::pick_up_or_throw))
         .run();
 }
